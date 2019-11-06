@@ -145,25 +145,46 @@ class ClockView: UIView {
             context.strokePath()
             
             // hour/minute's center
-            
+            let largeDotRadius: CGFloat = 6.0
+            let centerCircle = CGRect(x: clockCenter.x - largeDotRadius, y: clockCenter.y - largeDotRadius, width: 2 * largeDotRadius, height: 2 * largeDotRadius)
+            context.addEllipse(in: centerCircle)
+            context.setFillColor(hours.color.cgColor)
+            context.fillPath()
             // second hand
+            context.setStrokeColor(seconds.color.cgColor)
+            context.beginPath()
+            context.move(to: clockCenter)
+            context.setLineWidth(seconds.width)
+            context.addLine(to: secondHandEndPoint)
+            context.strokePath()
             
             // second's center
-            
+            let secondHandDotRadius: CGFloat = 3.0
+            let secondHandCircle = CGRect(x: clockCenter.x - secondHandDotRadius, y: clockCenter.y - secondHandDotRadius, width: 2 * secondHandDotRadius, height: 2 * secondHandDotRadius)
+            context.addEllipse(in: secondHandCircle)
+            context.setFillColor(seconds.color.cgColor)
+            context.fillPath()
         }
     }
     
     @objc func timerFired(_ sender: CADisplayLink) {
         // Get current time
+        let currentTime = Date()
         
         // Get calendar and set timezone
+        var calender = Calendar(identifier: .gregorian)
+        calender.timeZone = timezone!
         
         // Extract hour, minute, second components from current time
+        let timeComponents = calender.dateComponents([.hour, .minute, .second], from: currentTime)
         
         // Set above components to hours, minutes, seconds properties
+        hours.value = timeComponents.hour ?? 10
+        minutes.value = timeComponents.minute ?? 10
+        seconds.value = timeComponents.second ?? 10
         
         // Trigger a screen refresh
-        
+        setNeedsDisplay()
     }
     
     deinit {
